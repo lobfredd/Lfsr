@@ -14,21 +14,21 @@ public class Lfsr {
         for (int i = 0; i < degree; i++) {
             Cell b = new Cell();
             b.value = getBitAtPosition(initValue, (degree-1) - i);
-            int finalI = i;
-            b.gateOpen = IntStream.of(taps).anyMatch(x -> x == finalI);
+            int cellIndex = i;
+            b.gateOpen = IntStream.of(taps).anyMatch(x -> x == cellIndex);
             cells.add(b);
         }
     }
 
     public byte performClock(){
         byte outValue = cells.get(0).value;
-        byte inValue = outValue;
+        byte feedbackValue = outValue;
 
         for (int i = 1; i < cells.size(); i++) {
-            if(cells.get(i).gateOpen) inValue ^= cells.get(i).value;
+            if(cells.get(i).gateOpen) feedbackValue ^= cells.get(i).value;
             cells.get(i - 1).value = cells.get(i).value;
         }
-        cells.get(cells.size() - 1).value = inValue;
+        cells.get(cells.size() - 1).value = feedbackValue;
 
         return outValue;
     }
